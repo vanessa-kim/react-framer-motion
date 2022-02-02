@@ -1,6 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { useRef } from 'react';
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -75,25 +76,47 @@ const Wrapper = styled.div`
   align-items: center;
 `;
 
+const BiggerBox = styled.div`
+  width: 600px;
+  height: 600px;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  // overflow:hidden;
+`;
+
 const Box = styled(motion.div)`
   width: 200px;
   height: 200px;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 1);
   border-radius: 15px;
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
 `;
 
-const myVars = {
-  start: { scale: 0 },
-  end: { scale: 1, rotateZ: 360, transition: {type: 'spring', delay: 0.5}}
-}
+const boxVaraints = {
+  hover: { scale: 1.5, rotateZ: 90 },
+  click: { scale: 1, borderRadius: '100px' },
+};
 
 function App() {
+  const biggerBoxRef = useRef<HTMLDivElement>(null);
   return (
     <>  
       <GlobalStyle />
       <Wrapper>
-        <Box variants={myVars} initial="start" animate="end" />
+        <BiggerBox ref={biggerBoxRef}>
+          <Box 
+            drag 
+            dragSnapToOrigin
+            dragElastic={0.5}
+            dragConstraints={biggerBoxRef} 
+            variants={boxVaraints} 
+            whileHover="hover" 
+            whileTap="click" 
+          />
+        </BiggerBox>
       </Wrapper>
     </>
   );
