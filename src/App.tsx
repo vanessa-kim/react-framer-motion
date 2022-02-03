@@ -71,60 +71,82 @@ a {
 `;
 
 const Wrapper = styled(motion.div)`
-  position: relative;
   display: flex;
   height: 100vh;
   width: 100vw;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
   background:linear-gradient(135deg, rgba(238, 0, 153), rgba(221, 0, 238));
+  flex-direction: column;
 `;
 
 const Box = styled(motion.div)`
   position: absolute;
   top: 100px;
-  width: 200px;
-  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  width: 100px;
+  height: 100px;
   background-color: white;
   border-radius: 30px;
   box-shadow: 0, 0, 15px, rgba(0, 0, 0, 0.2);
 `;
 
-const boxVariants = {
-  initial: {
-    opacity: 0,
-    scale: 0,
-  },
-  visible: {
+const box = {
+  entry: (isBack: boolean) => ({
+      x: isBack ? -500 : 500,
+      opacity: 0,
+      scale: 0,
+  }),
+  center: {
+    x: 0,
     opacity: 1,
     scale: 1,
-    rotateZ: 360,
+    transition: {
+      duration: 0.3,
+    },
   },
-  leaving: {
+  exit: (isBack: boolean) => ({  
+    x: isBack ? 500 : -500,
     opacity: 0,
     scale: 0,
-    y: 50,
-  }
+    transition: {
+      duration: 0.3,
+    },
+  }),
 }
 
 function App() {
-  const [showing, setShowing] = useState(false);
-  const toggleShowing = () => setShowing((prev) => !prev);
+  const [visible, setVisible] = useState(1);
+  const [isBack, setIsBack] = useState(false);
+  const nextPlease = () =>{
+    setIsBack(false);
+    setVisible(prev => prev === 10 ? 10 : prev + 1);
+  } 
+  const prevPlease = () => {
+    setIsBack(true);
+    setVisible(prev => prev === 1?  1 : prev - 1)
+  };
   return (
     <>  
       <GlobalStyle />
       <Wrapper>
-        <button onClick={toggleShowing}>Click</button>
-        <AnimatePresence>
-          {showing ? 
-            <Box 
-              variants={boxVariants} 
-              initial="initial" 
-              animate="visible" 
-              exit="leaving"
-            /> : null}
+        <AnimatePresence exitBeforeEnter custom={isBack}>
+          <Box 
+            custom={isBack}
+            variants={box} 
+            initial="entry" 
+            animate="center" 
+            exit="exit" 
+            key={visible}
+          >
+            {visible}
+          </Box>
         </AnimatePresence>
+        <button onClick={prevPlease}>Prev</button>
+        <button onClick={nextPlease}>next</button>
       </Wrapper>
     </>
   );
