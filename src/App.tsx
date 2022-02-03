@@ -81,72 +81,37 @@ const Wrapper = styled(motion.div)`
 `;
 
 const Box = styled(motion.div)`
-  position: absolute;
-  top: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 28px;
-  width: 100px;
-  height: 100px;
+  width: 400px;
+  height: 400px;
   background-color: white;
   border-radius: 30px;
   box-shadow: 0, 0, 15px, rgba(0, 0, 0, 0.2);
 `;
 
-const box = {
-  entry: (isBack: boolean) => ({
-      x: isBack ? -500 : 500,
-      opacity: 0,
-      scale: 0,
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.3,
-    },
-  },
-  exit: (isBack: boolean) => ({  
-    x: isBack ? 500 : -500,
-    opacity: 0,
-    scale: 0,
-    transition: {
-      duration: 0.3,
-    },
-  }),
-}
+const Circle = styled(motion.div)`
+  background-color: #00a5ff;
+  height: 100px;
+  width: 100px;
+  border-radius: 50px;
+  box-shadow: 0, 0, 15px, rgba(0, 0, 0, 0.2);
+`;
 
 function App() {
-  const [visible, setVisible] = useState(1);
-  const [isBack, setIsBack] = useState(false);
-  const nextPlease = () =>{
-    setIsBack(false);
-    setVisible(prev => prev === 10 ? 10 : prev + 1);
-  } 
-  const prevPlease = () => {
-    setIsBack(true);
-    setVisible(prev => prev === 1?  1 : prev - 1)
-  };
+  const [clicked, setClicked] = useState(false);
+  const toggleClick = () => setClicked(prev => !prev);
   return (
     <>  
       <GlobalStyle />
-      <Wrapper>
-        <AnimatePresence exitBeforeEnter custom={isBack}>
-          <Box 
-            custom={isBack}
-            variants={box} 
-            initial="entry" 
-            animate="center" 
-            exit="exit" 
-            key={visible}
-          >
-            {visible}
-          </Box>
-        </AnimatePresence>
-        <button onClick={prevPlease}>Prev</button>
-        <button onClick={nextPlease}>next</button>
+      <Wrapper onClick={toggleClick}>
+        <Box>
+          {!clicked ? <Circle layoutId="circle" style={{ borderRadius: 50 }}/> : null}
+        </Box>
+        <Box>
+          {clicked ? <Circle layoutId="circle" style={{ borderRadius: 0, scale: 2 }}/> : null}
+        </Box>
       </Wrapper>
     </>
   );
