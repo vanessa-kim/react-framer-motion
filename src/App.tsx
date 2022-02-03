@@ -1,10 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 import styled from 'styled-components';
-import { 
-  motion, 
-  AnimatePresence,
-} from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -84,34 +81,58 @@ const Box = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 400px;
-  height: 400px;
+  height: 200px;
   background-color: white;
   border-radius: 30px;
   box-shadow: 0, 0, 15px, rgba(0, 0, 0, 0.2);
 `;
 
-const Circle = styled(motion.div)`
-  background-color: #00a5ff;
-  height: 100px;
-  width: 100px;
-  border-radius: 50px;
-  box-shadow: 0, 0, 15px, rgba(0, 0, 0, 0.2);
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 50vw;
+  gap: 10px;
+  div:first-child {
+    grid-column: span 2;
+  }
+  div:last-child {
+    grid-column: span 2;
+  }
+`;
+
+const Overlay = styled(motion.div)`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 function App() {
-  const [clicked, setClicked] = useState(false);
-  const toggleClick = () => setClicked(prev => !prev);
+  const [id, setId] = useState<null|string>(null);
+  console.log(id);
   return (
     <>  
       <GlobalStyle />
-      <Wrapper onClick={toggleClick}>
-        <Box>
-          {!clicked ? <Circle layoutId="circle" style={{ borderRadius: 50 }}/> : null}
-        </Box>
-        <Box>
-          {clicked ? <Circle layoutId="circle" style={{ borderRadius: 0, scale: 2 }}/> : null}
-        </Box>
+      <Wrapper>
+        <Grid>
+          {['1', '2', '3', '4'].map(n => 
+            <Box onClick={() => setId(n) } key={n} layoutId={n}/>
+          )}
+        </Grid>
+        <AnimatePresence>
+          { id ? 
+            <Overlay 
+              onClick={() => setId(null) }
+              initial={{ backgroundColor: 'rgba(0, 0, 0, 0)', }}
+              animate={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', }}
+              exit={{ backgroundColor: 'rgba(0, 0, 0, 0)', }}
+            >
+              <Box layoutId={id} style={{ width: 400, height: 200 }} />
+            </Overlay>
+            : null }
+        </AnimatePresence>
       </Wrapper>
     </>
   );
